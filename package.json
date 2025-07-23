@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node -r ts-node/register --watch --env-file=.env src/app.ts",
-    "test": "npx jest"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
