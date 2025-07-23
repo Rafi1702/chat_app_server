@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node -r ts-node/register --watch --env-file=.env src/app.ts",
-    "test": "jest"
+    "test": "npx jest"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +20,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.1.0",
     "@types/ws": "^8.18.1",
+    "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
   }
 }
