@@ -1,49 +1,59 @@
-import { UserRepository, User } from "../repository/user.repository"
+import { UserRepository, User } from "../repository/user.repository";
 
-
-
-
-interface UserService {
-    login: (username: string) => Promise<void>,
-    register: (user: User) => Promise<void>,
-    updateProfile: (user: User) => Promise<User>,
+export interface UserService {
+  login: (username: string, password: string) => Promise<void>;
+  register: (username: string, password: string) => Promise<void>;
+  updateProfile: (user: User) => Promise<User>;
+  getUsers: () => Promise<User[]>;
+  getUserById: (id: number) => Promise<User | null>;
 }
 
+export const userServiceImpl = (
+  userRepository: UserRepository
+): UserService => ({
+  login: async function (username: string, password: string): Promise<void> {
+    const userRecord = await userRepository.findUserByUserNameAndPassword(
+      username,
+      password
+    );
 
-export class UserServiceImpl implements UserService {
-    private userRepository: UserRepository;
-    constructor(userRepository: UserRepository) {
-        this.userRepository = userRepository
-    }
+    if (userRecord == null) throw Error();
 
-    login = async (username: string) => {
+    return;
+  },
+  register: async function (username: string, password: string): Promise<void> {
+    const userRecord = await userRepository.findUserByUserNameAndPassword(
+      username,
+      password
+    );
 
-        const userRecord = await this.userRepository.findUserByUserName(username)
+    if (userRecord) throw new Error();
 
-        if (!userRecord) throw Error()
+    const user: User = {
+      id: 0,
+      username: username,
+      password: password,
+    };
 
-        return
-    }
-    register = async (user: User) => {
-        const userRecord = await this.userRepository.findUserByUserName(user.username)
+    userRepository.createUser(user);
 
-        if (userRecord) throw new Error()
+    return;
+  },
+  updateProfile: async function (user: User): Promise<User> {
+    const userRecord = userRepository.findUserById(user.id);
 
-        this.userRepository.createUser(user)
+    if (!userRecord) throw new Error();
 
-        return
-    }
+    const updatedProfile = await userRepository.updateUser(user);
 
-    updateProfile = async (user: User): Promise<User> => {
-        const userRecord = this.userRepository.findUserById(user.id)
+    if (!updatedProfile) throw new Error();
 
-        if (!userRecord) throw new Error()
-
-        const updatedProfile = await this.userRepository.updateUser(user)
-
-        if (!updatedProfile) throw new Error()
-
-        return updatedProfile
-    }
-}
-
+    return updatedProfile;
+  },
+  getUsers: async function (): Promise<User[]> {
+    return await userRepository.findUsers();
+  },
+  getUserById: async function (id: number): Promise<User | null> {
+    return await userRepository.findUserById(id);
+  },
+});

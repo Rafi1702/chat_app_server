@@ -9,8 +9,16 @@ const dbPool = mysql.createPool({
     database: db.development.database,
 })
 
+export type DbClient = {
+    query: (sql: string, values?: any[]) => Promise<[any, any]>;
+};
 
-export default dbPool
+export const dbClient: DbClient = {
+    query: (sql, values) => dbPool.query(sql, values),
+};
+
+
+
 
 
 
